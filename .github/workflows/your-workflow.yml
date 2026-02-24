@@ -1,0 +1,26 @@
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write   # Required for OIDC
+      contents: read    # Required for actions/checkout
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Authenticate to Google Cloud
+      id: auth
+      uses: google-github-actions/auth@v1
+      with:
+        token_format: access_token
+        workload_identity_provider: "projects/600024426967/locations/global/workloadIdentityPools/wsl-pool/providers/github"
+        service_account: "github-sa@project-6d6e72cf-66ac-4cc8-95b.iam.gserviceaccount.com"
+
+    - name: Set up gcloud
+      uses: google-github-actions/setup-gcloud@v1
+      with:
+        project_id: project-6d6e72cf-66ac-4cc8-95b
+
+    - name: Run gcloud command
+      run: gcloud compute instances list
